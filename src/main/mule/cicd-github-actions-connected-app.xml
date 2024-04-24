@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="827e4206-f4c0-4115-a31e-15a12d9ab4c5" >
+		<http:listener-connection host="0.0.0.0" port="8081" />
+	</http:listener-config>
+	<flow name="cicd-github-actions-connected-appFlow" doc:id="fab7ce4f-6571-4e1a-8c03-81330ef2920a" >
+		<http:listener doc:name="Listener" doc:id="0994ec3f-e8a1-4597-b6b8-3611e34d128e" config-ref="HTTP_Listener_config" path="/hello"/>
+		<ee:transform doc:name="Transform Message" doc:id="45a87439-d0dd-4b12-98b6-e320c43c69ee" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	"status": "Success",
+	"message": "Hello World"
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<set-variable value="#[200 as Number]" doc:name="Set Variable" doc:id="39208d01-6a52-46f1-8d92-7ff45fae5720" variableName="httpStatus"/>
+		<logger level="INFO" doc:name="Logger" doc:id="dd930767-be4b-446d-b50a-b6d6dffd4c59" message="#[payload]"/>
+	</flow>
+</mule>
